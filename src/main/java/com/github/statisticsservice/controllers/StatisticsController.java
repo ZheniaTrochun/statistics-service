@@ -121,7 +121,7 @@ public class StatisticsController {
     @PostMapping("/update")
     public ResponseEntity updateOutcomes(@RequestBody StatisticsData data, HttpRequest request)
             throws AuthenticationException {
-        LOGGER.trace("Trying to update statistics of outcomes...");
+        LOGGER.info("Trying to update statistics of outcomes...");
 
 //        String username = checkAuthentication(request);     // TODO throws AuthenticationException!
 
