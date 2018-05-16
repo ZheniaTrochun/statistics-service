@@ -10,6 +10,7 @@ package com.github.statisticsservice.model;
 public class StatisticsData {
 
     private String tag;
+    private String user;
     private Double data;
 
     public StatisticsData() {
@@ -17,6 +18,12 @@ public class StatisticsData {
 
     public StatisticsData(String tag, Double data) {
         this.tag = tag;
+        this.data = data;
+    }
+
+    public StatisticsData(String tag, String user, Double data) {
+        this.tag = tag;
+        this.user = user;
         this.data = data;
     }
 
@@ -34,5 +41,13 @@ public class StatisticsData {
 
     public void setData(Double data) {
         this.data = data;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 }

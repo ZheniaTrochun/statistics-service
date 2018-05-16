@@ -123,14 +123,14 @@ public class StatisticsController {
             throws AuthenticationException {
         LOGGER.trace("Trying to update statistics of outcomes...");
 
-        String username = checkAuthentication(request);     // TODO throws AuthenticationException!
+//        String username = checkAuthentication(request);     // TODO throws AuthenticationException!
 
         LocalDateTime now = LocalDateTime.now();
 
-        if (data.getData().doubleValue() <= 0) {
-            statisticsService.updateOutcomesStats(username, now.getYear(), now.getMonthValue(), data);
+        if (data.getData() <= 0) {
+            statisticsService.updateOutcomesStats(data.getUser(), now.getYear(), now.getMonthValue(), data);
         } else {
-            statisticsService.updateIncomesStats(username, now.getYear(), now.getMonthValue(), data);
+            statisticsService.updateIncomesStats(data.getUser(), now.getYear(), now.getMonthValue(), data);
         }
 
         LOGGER.trace("Successfully updated statistics of outcomes.");
