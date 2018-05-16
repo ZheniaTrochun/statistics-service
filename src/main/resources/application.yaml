@@ -6,6 +6,8 @@ spring.data.mongodb.port: 23009
 spring.data.mongodb.database: heroku_z4wd2s19
 spring.data.mongodb.username: heroku_z4wd2s19
 
+application.security.secret: "top-secret"
+
 #logging
 logging.level.org.springframework.data: debug
 logging.level.: info

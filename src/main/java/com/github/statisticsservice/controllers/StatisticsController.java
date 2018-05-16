@@ -4,9 +4,12 @@ import com.github.statisticsservice.model.Statistics;
 import com.github.statisticsservice.model.StatisticsData;
 import com.github.statisticsservice.services.AuthenticationService;
 import com.github.statisticsservice.services.StatisticsService;
+import io.jsonwebtoken.Jwts;
+import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -34,11 +38,15 @@ public class StatisticsController {
     private final StatisticsService statisticsService;
     private final AuthenticationService authenticationService;
 
+    private final String secret;
+
     @Autowired
     public StatisticsController(StatisticsService statisticsService,
-                                AuthenticationService authenticationService) {
+                                AuthenticationService authenticationService,
+                                @Value("${application.security.secret}") String secret) {
         this.statisticsService = statisticsService;
         this.authenticationService = authenticationService;
+        this.secret = secret;
     }
 
     @GetMapping("/incomes/per-month")
@@ -95,22 +103,22 @@ public class StatisticsController {
 
 
 
-    @PostMapping("/update/incomes")
-    public ResponseEntity updateIncomes(@RequestBody StatisticsData data, HttpRequest request)
-            throws AuthenticationException {
-        LOGGER.trace("Trying to update statistics of incomes...");
+//    @PostMapping("/update/incomes")
+//    public ResponseEntity updateIncomes(@RequestBody StatisticsData data, HttpRequest request)
+//            throws AuthenticationException {
+//        LOGGER.trace("Trying to update statistics of incomes...");
+//
+//        String username = checkAuthentication(request);     // TODO throws AuthenticationException!
+//
+//        LocalDateTime now = LocalDateTime.now();
+//
+//        statisticsService.updateIncomesStats(username, now.getYear(), now.getMonthValue(), data);
+//
+//        LOGGER.trace("Successfully updated statistics of incomes.");
+//        return new ResponseEntity(HttpStatus.OK);
+//    }
 
-        String username = checkAuthentication(request);     // TODO throws AuthenticationException!
-
-        LocalDateTime now = LocalDateTime.now();
-
-        statisticsService.updateIncomesStats(username, now.getYear(), now.getMonthValue(), data);
-
-        LOGGER.trace("Successfully updated statistics of incomes.");
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @PostMapping("/update/outcomes")
+    @PostMapping("/update")
     public ResponseEntity updateOutcomes(@RequestBody StatisticsData data, HttpRequest request)
             throws AuthenticationException {
         LOGGER.trace("Trying to update statistics of outcomes...");
@@ -119,7 +127,11 @@ public class StatisticsController {
 
         LocalDateTime now = LocalDateTime.now();
 
-        statisticsService.updateOutcomesStats(username, now.getYear(), now.getMonthValue(), data);
+        if (data.getData().doubleValue() <= 0) {
+            statisticsService.updateOutcomesStats(username, now.getYear(), now.getMonthValue(), data);
+        } else {
+            statisticsService.updateIncomesStats(username, now.getYear(), now.getMonthValue(), data);
+        }
 
         LOGGER.trace("Successfully updated statistics of outcomes.");
         return new ResponseEntity(HttpStatus.OK);
@@ -136,19 +148,28 @@ public class StatisticsController {
     private String checkAuthentication(HttpRequest request) throws AuthenticationException {
         LOGGER.trace("Checking authentication...");
 
-        List<String> headers = request.getHeaders().get("Authentication");
+        String jwt = ((HttpServletRequest)request).getHeader("Authentication");
 
-        if (headers.isEmpty()) {
-            throw new AuthenticationException("Not authorised!");
-        } else {
-            String username = headers.get(0);
+//        if (headers.isEmpty()) {
+//            throw new AuthenticationException("Not authorised!");
+//        } else {
+//            String username = headers.get(0);
+//
+//            if (!authenticationService.userIsPresent(username)) {
+//                throw new AuthenticationException("Not authorised!");
+//            }
+//
+//            LOGGER.trace("Authentication was checked successfully.");
+//            return username;
+//        }
 
-            if (!authenticationService.userIsPresent(username)) {
-                throw new AuthenticationException("Not authorised!");
-            }
+        String user = Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJwt(jwt)
+                .getBody()
+                .get("user", String.class);
 
-            LOGGER.trace("Authentication was checked successfully.");
-            return username;
-        }
+        LOGGER.trace("Authentication was checked successfully {}", Strings.isNotBlank(user));
+        return user;
     }
 }
