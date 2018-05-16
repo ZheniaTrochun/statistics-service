@@ -4,7 +4,7 @@ config.key: statistics-service
 spring.data.mongodb.host: ds223009.mlab.com
 spring.data.mongodb.port: 23009
 spring.data.mongodb.database: heroku_z4wd2s19
-spring.data.mongodb.user: heroku_z4wd2s19
+spring.data.mongodb.username: heroku_z4wd2s19
 
 #logging
 logging.level.org.springframework.data: debug
