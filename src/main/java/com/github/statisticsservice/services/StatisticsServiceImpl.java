@@ -146,6 +146,8 @@ public class StatisticsServiceImpl implements StatisticsService {
             Statistics newStatistics = new Statistics(username, year, month, new HashMap<>(), new HashMap<>());
             newStatistics.getIncomesStats().put(data.getTag(), data.getData());
 
+            LOGGER.info("repo " + String.valueOf(statisticsRepository == null));
+            LOGGER.info("stats " + String.valueOf(newStatistics == null));
             statisticsRepository.save(newStatistics);
 
             LOGGER.trace("Successfully created new statistics record instead of update existent.");
