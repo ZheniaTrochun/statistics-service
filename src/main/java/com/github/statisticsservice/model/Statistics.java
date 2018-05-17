@@ -1,7 +1,5 @@
 package com.github.statisticsservice.model;
 
-import org.springframework.data.annotation.Id;
-
 import javax.persistence.*;
 import java.util.Map;
 import java.util.Objects;
