@@ -1,6 +1,7 @@
 package com.github.statisticsservice.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,17 +15,17 @@ import java.util.Objects;
  *
  * @version 0.1
  */
-@Document(collection = "statistics")
+@Document
+@CompoundIndex(name = "user_year_month_idx", def = "{'user' : 1, 'year' : 1, 'month' : 1}", unique = true)
 public class Statistics {
 
     @Id
     private String id;
 
-    @Indexed(unique = true)
     private String user;
-    @Indexed(unique = true)
+
     private Integer year;
-    @Indexed(unique = true)
+
     private Integer month;
 
     private Map<String, Double> incomesStats;
