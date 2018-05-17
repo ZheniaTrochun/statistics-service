@@ -50,4 +50,13 @@ public class StatisticsData {
     public void setUser(String user) {
         this.user = user;
     }
+
+    @Override
+    public String toString() {
+        return "StatisticsData{" +
+                "tag='" + tag + '\'' +
+                ", user='" + user + '\'' +
+                ", data=" + data +
+                '}';
+    }
 }
