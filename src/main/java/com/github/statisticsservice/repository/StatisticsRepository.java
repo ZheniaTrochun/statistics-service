@@ -2,6 +2,7 @@ package com.github.statisticsservice.repository;
 
 import com.github.statisticsservice.model.Statistics;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import java.util.Optional;
  *
  * @see MongoRepository
  */
+@Repository
 public interface StatisticsRepository extends MongoRepository<Statistics, String> {
 
     Optional<Statistics> findByUserAndYearAndMonth(String user, Integer year, Integer month);
