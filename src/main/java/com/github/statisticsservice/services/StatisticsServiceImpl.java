@@ -148,7 +148,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
             LOGGER.info("repo " + String.valueOf(statisticsRepository == null));
             LOGGER.info("stats " + String.valueOf(newStatistics == null));
-            statisticsRepository.insert(newStatistics);
+            statisticsRepository.save(newStatistics);
 
             LOGGER.trace("Successfully created new statistics record instead of update existent.");
             return newStatistics;

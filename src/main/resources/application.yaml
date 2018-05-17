@@ -7,7 +7,15 @@ config.key: statistics-service
 #spring.data.mongodb.user: heroku_z4wd2s19
 #spring.data.mongodb.uri: "mongodb://heroku_z4wd2s19:lprak24spjsde2mvgamd9u75t6@ds223009.mlab.com:23009/heroku_z4wd2s19"
 
-spring.data.mongodb.uri: ${MONGODB_URI}
+spring.datasource.username: "icdjveqokdnxza"
+spring.datasource.password: "42128a4185d52d9064c3b5151ff6525be26db858890f95284969f375e097de2b"
+#spring.datasource.url: "jdbc:postgresql://ec2-54-75-239-237.eu-west-1.compute.amazonaws.com:5432/d6fsprddobqk7a?sslmode=require"
+spring.datasource.url: "jdbc:postgresql://ec2-54-75-246-50.eu-west-1.compute.amazonaws.com:5432/ddp8otv4oam1uv?sslmode=require"
+spring.datasource.driver-class-name: org.postgresql.Driver
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation: true
+spring.jpa.database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+#spring.data.mongodb.uri: ${MONGODB_URI}
 
 application.security.secret: top-secret
 

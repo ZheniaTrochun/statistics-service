@@ -1,10 +1,8 @@
 package com.github.statisticsservice.model;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.persistence.*;
 import java.util.Map;
 import java.util.Objects;
 
@@ -15,12 +13,15 @@ import java.util.Objects;
  *
  * @version 0.1
  */
-@Document
-@CompoundIndex(name = "user_year_month_idx", def = "{'user' : 1, 'year' : 1, 'month' : 1}", unique = true)
+//@Document
+//@CompoundIndex(name = "user_year_month_idx", def = "{'user' : 1, 'year' : 1, 'month' : 1}", unique = true)
+@Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user", "year", "month"}))
 public class Statistics {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String user;
 
@@ -28,13 +29,22 @@ public class Statistics {
 
     private Integer month;
 
+    @ElementCollection
+    @MapKeyColumn(name="name")
+    @Column(name="value")
+    @CollectionTable(name="statistics_incomesStats", joinColumns=@JoinColumn(name="statistics_id"))
     private Map<String, Double> incomesStats;
+
+    @ElementCollection
+    @MapKeyColumn(name="name")
+    @Column(name="value")
+    @CollectionTable(name="statistics_outcomesStats", joinColumns=@JoinColumn(name="statistics_id"))
     private Map<String, Double> outcomesStats;
 
     public Statistics() {
     }
 
-    public Statistics(String id, String user, Integer year, Integer month,
+    public Statistics(Long id, String user, Integer year, Integer month,
                       Map<String, Double> incomesStats, Map<String, Double> outcomesStats) {
         this.id = id;
         this.user = user;
@@ -52,11 +62,11 @@ public class Statistics {
         this.outcomesStats = outcomesStats;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
