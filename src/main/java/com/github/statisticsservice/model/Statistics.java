@@ -30,13 +30,13 @@ public class Statistics {
     @ElementCollection
     @MapKeyColumn(name="name")
     @Column(name="value")
-    @CollectionTable(name="statistics_incomesStats", joinColumns=@JoinColumn(name="statistics_id"))
+//    @CollectionTable(name="statistics_incomesStats", joinColumns=@JoinColumn(name="statistics_id"))
     private Map<String, Double> incomesStats;
 
     @ElementCollection
     @MapKeyColumn(name="name")
     @Column(name="value")
-    @CollectionTable(name="statistics_outcomesStats", joinColumns=@JoinColumn(name="statistics_id"))
+//    @CollectionTable(name="statistics_outcomesStats", joinColumns=@JoinColumn(name="statistics_id"))
     private Map<String, Double> outcomesStats;
 
     public Statistics() {
