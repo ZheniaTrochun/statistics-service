@@ -5,11 +5,13 @@ import com.github.statisticsservice.model.StatisticsData;
 import com.github.statisticsservice.services.AuthenticationService;
 import com.github.statisticsservice.services.StatisticsService;
 import io.jsonwebtoken.Jwts;
+import javafx.util.Pair;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,22 +52,29 @@ public class StatisticsController {
     }
 
     @GetMapping("/incomes/per-month")
-    public @ResponseBody Map<String, Double> getAllIncomesPerMonth(
+    public ResponseEntity<?> getAllIncomesPerMonth(
             @RequestParam Integer year,
             @RequestParam Integer month,
-            HttpRequest request) throws AuthenticationException {
+            HttpServletRequest request) throws AuthenticationException {
         LOGGER.trace("Trying to get all incomes per month...");
 
         String username = checkAuthentication(request);     // TODO throws AuthenticationException!
 
         Statistics statistics = statisticsService.getPerMonth(username, year, month);
+        if (statistics == null) {
+            String message = "No statistics with such parameters was found.";
+            LOGGER.warn(message);
+            return new ResponseEntity<>(
+                    createHeaders(new Pair<>(HttpHeaders.WARNING, message)),
+                    HttpStatus.NOT_FOUND);
+        }
 
         LOGGER.trace("Successfully got all incomes per month.");
-        return statistics.getIncomesStats();
+        return new ResponseEntity<>(statistics.getIncomesStats(), HttpStatus.OK);
     }
 
     @GetMapping("/incomes/percentage")
-    public @ResponseBody Map<String, Integer> getPercentageIncomesPerAllTime(HttpRequest request)
+    public @ResponseBody Map<String, Integer> getPercentageIncomesPerAllTime(HttpServletRequest request)
             throws AuthenticationException {
         LOGGER.trace("Trying to get percentages of all incomes...");
 
@@ -76,22 +85,29 @@ public class StatisticsController {
     }
 
     @GetMapping("/outcomes/per-month")
-    public @ResponseBody Map<String, Double> getAllOutcomesPerMonth(
+    public ResponseEntity<?> getAllOutcomesPerMonth(
             @RequestParam Integer year,
             @RequestParam Integer month,
-            HttpRequest request) throws AuthenticationException {
+            HttpServletRequest request) throws AuthenticationException {
         LOGGER.trace("Trying to get all outcomes per month...");
 
         String username = checkAuthentication(request);     // TODO throws AuthenticationException!
 
         Statistics statistics = statisticsService.getPerMonth(username, year, month);
+        if (statistics == null) {
+            String message = "No statistics with such parameters was found.";
+            LOGGER.warn(message);
+            return new ResponseEntity<>(createHeaders(
+                    new Pair<>(HttpHeaders.WARNING, message)),
+                    HttpStatus.NOT_FOUND);
+        }
 
         LOGGER.trace("Successfully got all outcomes per month.");
-        return statistics.getOutcomesStats();
+        return new ResponseEntity<>(statistics.getOutcomesStats(), HttpStatus.OK);
     }
 
     @GetMapping("/outcomes/percentage")
-    public @ResponseBody Map<String, Integer> getPercentageOutcomesPerAllTime(HttpRequest request)
+    public @ResponseBody Map<String, Integer> getPercentageOutcomesPerAllTime(HttpServletRequest request)
             throws AuthenticationException {
         LOGGER.trace("Trying to get percentages of all outcomes...");
 
@@ -101,29 +117,10 @@ public class StatisticsController {
         return statisticsService.getOutcomesPercentage(username);
     }
 
-
-
-//    @PostMapping("/update/incomes")
-//    public ResponseEntity updateIncomes(@RequestBody StatisticsData data, HttpRequest request)
-//            throws AuthenticationException {
-//        LOGGER.trace("Trying to update statistics of incomes...");
-//
-//        String username = checkAuthentication(request);     // TODO throws AuthenticationException!
-//
-//        LocalDateTime now = LocalDateTime.now();
-//
-//        statisticsService.updateIncomesStats(username, now.getYear(), now.getMonthValue(), data);
-//
-//        LOGGER.trace("Successfully updated statistics of incomes.");
-//        return new ResponseEntity(HttpStatus.OK);
-//    }
-
     @PostMapping("/update")
-    public ResponseEntity updateOutcomes(@RequestBody StatisticsData data, HttpRequest request)
+    public ResponseEntity updateOutcomes(@RequestBody StatisticsData data)
             throws AuthenticationException {
-        LOGGER.info("Trying to update statistics of outcomes...");
-
-//        String username = checkAuthentication(request);     // TODO throws AuthenticationException!
+        LOGGER.info("Trying to update statistics...");
 
         LocalDateTime now = LocalDateTime.now();
 
@@ -133,7 +130,7 @@ public class StatisticsController {
             statisticsService.updateIncomesStats(data.getUser(), now.getYear(), now.getMonthValue(), data);
         }
 
-        LOGGER.trace("Successfully updated statistics of outcomes.");
+        LOGGER.trace("Successfully updated statistics.");
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -145,31 +142,34 @@ public class StatisticsController {
      * @return valid username of existent User, if request is authorised.
      * @throws AuthenticationException if request was not authorised.
      */
-    private String checkAuthentication(HttpRequest request) throws AuthenticationException {
+    private String checkAuthentication(HttpServletRequest request) throws AuthenticationException {
         LOGGER.trace("Checking authentication...");
 
-        String jwt = ((HttpServletRequest)request).getHeader("Authentication");
+       String jwt = request.getHeader("Authentication");
 
-//        if (headers.isEmpty()) {
-//            throw new AuthenticationException("Not authorised!");
-//        } else {
-//            String username = headers.get(0);
+//       String user = Jwts.parser()
+//                .setSigningKey(secret)
+//                .parseClaimsJwt(jwt)
+//                .getBody()
+//                .get("user", String.class);
 //
-//            if (!authenticationService.userIsPresent(username)) {
-//                throw new AuthenticationException("Not authorised!");
-//            }
-//
-//            LOGGER.trace("Authentication was checked successfully.");
-//            return username;
-//        }
+//        LOGGER.trace("Authentication was checked successfully {}", Strings.isNotBlank(user));
+//        return user;
 
-        String user = Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJwt(jwt)
-                .getBody()
-                .get("user", String.class);
+        return request.getHeader("Authentication");
+    }
 
-        LOGGER.trace("Authentication was checked successfully {}", Strings.isNotBlank(user));
-        return user;
+    /**
+     * Concatenates array of HTTP Header pairs into HttpHeaders instance.
+     *
+     * @param headers array of pairs [header_name]:[header_value]
+     * @return HttpHeaders instance.
+     */
+    private HttpHeaders createHeaders(Pair<String, String>... headers) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        for (Pair<String, String> header : headers) {
+            httpHeaders.add(header.getKey(), header.getValue());
+        }
+        return httpHeaders;
     }
 }

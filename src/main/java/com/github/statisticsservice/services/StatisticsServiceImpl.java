@@ -146,6 +146,8 @@ public class StatisticsServiceImpl implements StatisticsService {
             Statistics newStatistics = new Statistics(username, year, month, new HashMap<>(), new HashMap<>());
             newStatistics.getIncomesStats().put(data.getTag(), data.getData());
 
+            statisticsRepository.save(newStatistics);
+
             LOGGER.trace("Successfully created new statistics record instead of update existent.");
             return newStatistics;
         }
@@ -184,6 +186,8 @@ public class StatisticsServiceImpl implements StatisticsService {
             Statistics newStatistics = new Statistics(username, year, month, new HashMap<>(), new HashMap<>());
             newStatistics.getOutcomesStats().put(data.getTag(), data.getData());
 
+            statisticsRepository.save(newStatistics);
+
             LOGGER.trace("Successfully created new statistics record instead of update existent.");
             return newStatistics;
         }
@@ -205,7 +209,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         Map<String, Integer> resultMap = new HashMap<>();
 
-        mergedMap.forEach((key, value) -> resultMap.put(key, (int) Math.round(value / sum)));
+        mergedMap.forEach((key, value) -> resultMap.put(key, (int) Math.round(value / sum * 100)));
 
         return resultMap;
     }
