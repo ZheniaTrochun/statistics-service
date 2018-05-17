@@ -144,7 +144,7 @@ public class StatisticsController {
 
        String user = Jwts.parser()
                 .setSigningKey(secret)
-                .parseClaimsJwt(jwt)
+                .parseClaimsJws(jwt)
                 .getBody()
                 .getSubject();
 
