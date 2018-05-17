@@ -1,6 +1,5 @@
 package com.github.statisticsservice.configs.remote;
 
-import com.github.statisticsservice.configs.remote.RemoteConfigsManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;

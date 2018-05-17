@@ -6,6 +6,13 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Statistics domain (POJO data class).
+ *
+ * Contains field declarations, needed for MongoDB.
+ *
+ * @version 0.1
+ */
 public class Statistics {
 
     @Id
@@ -15,17 +22,31 @@ public class Statistics {
     private String user;
     @Indexed(unique = true)
     private Integer year;
+    @Indexed(unique = true)
+    private Integer month;
 
-    private Map<String, Double> stats;
+    private Map<String, Double> incomesStats;
+    private Map<String, Double> outcomesStats;
 
     public Statistics() {
     }
 
-    public Statistics(String id, String user, Integer year, Map<String, Double> stats) {
+    public Statistics(String id, String user, Integer year, Integer month,
+                      Map<String, Double> incomesStats, Map<String, Double> outcomesStats) {
         this.id = id;
         this.user = user;
         this.year = year;
-        this.stats = stats;
+        this.month = month;
+        this.incomesStats = incomesStats;
+        this.outcomesStats = outcomesStats;
+    }
+
+    public Statistics(String user, Integer year, Integer month, Map<String, Double> incomesStats, Map<String, Double> outcomesStats) {
+        this.user = user;
+        this.year = year;
+        this.month = month;
+        this.incomesStats = incomesStats;
+        this.outcomesStats = outcomesStats;
     }
 
     public String getId() {
@@ -52,29 +73,36 @@ public class Statistics {
         this.year = year;
     }
 
-    public Map<String, Double> getStats() {
-        return stats;
+    public Integer getMonth() {
+        return month;
     }
 
-    public void setStats(Map<String, Double> stats) {
-        this.stats = stats;
+    public void setMonth(Integer month) {
+        this.month = month;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Statistics)) return false;
-        Statistics that = (Statistics) o;
-        return Objects.equals(getId(), that.getId()) &&
-                Objects.equals(getUser(), that.getUser()) &&
-                Objects.equals(getYear(), that.getYear()) &&
-                Objects.equals(getStats(), that.getStats());
+    public Map<String, Double> getIncomesStats() {
+        return incomesStats;
     }
+
+    public void setIncomesStats(Map<String, Double> incomesStats) {
+        this.incomesStats = incomesStats;
+    }
+
+    public Map<String, Double> getOutcomesStats() {
+        return outcomesStats;
+    }
+
+    public void setOutcomesStats(Map<String, Double> outcomesStats) {
+        this.outcomesStats = outcomesStats;
+    }
+
+
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(getId(), getUser(), getYear(), getStats());
+        return Objects.hash(getId(), getUser(), getYear(), getMonth(),
+                getIncomesStats(), getOutcomesStats());
     }
 
     @Override
@@ -83,7 +111,9 @@ public class Statistics {
                 "id='" + id + '\'' +
                 ", user='" + user + '\'' +
                 ", year=" + year +
-                ", stats=" + stats +
+                ", month=" + month +
+                ", incomesStats=" + incomesStats +
+                ", outcomesStats=" + outcomesStats +
                 '}';
     }
 }
