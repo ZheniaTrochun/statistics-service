@@ -4,9 +4,10 @@ config.key: statistics-service
 #spring.data.mongodb.host: heroku_z4wd2s19:lprak24spjsde2mvgamd9u75t6@ds223009.mlab.com
 #spring.data.mongodb.port: 23009
 #spring.data.mongodb.database: heroku_z4wd2s19
-spring.data.mongodb.user: heroku_z4wd2s19
-spring.data.mongodb.uri: "mongodb://heroku_z4wd2s19:lprak24spjsde2mvgamd9u75t6@ds223009.mlab.com:23009/heroku_z4wd2s19"
+#spring.data.mongodb.user: heroku_z4wd2s19
+#spring.data.mongodb.uri: "mongodb://heroku_z4wd2s19:lprak24spjsde2mvgamd9u75t6@ds223009.mlab.com:23009/heroku_z4wd2s19"
 
+spring.data.mongodb.uri: ${MONGODB_URI}
 
 application.security.secret: top-secret
 
