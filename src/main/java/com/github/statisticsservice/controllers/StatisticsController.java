@@ -147,16 +147,14 @@ public class StatisticsController {
 
        String jwt = request.getHeader("Authentication");
 
-//       String user = Jwts.parser()
-//                .setSigningKey(secret)
-//                .parseClaimsJwt(jwt)
-//                .getBody()
-//                .get("user", String.class);
-//
-//        LOGGER.trace("Authentication was checked successfully {}", Strings.isNotBlank(user));
-//        return user;
+       String user = Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJwt(jwt)
+                .getBody()
+                .get("user", String.class);
 
-        return request.getHeader("Authentication");
+        LOGGER.trace("Authentication was checked successfully {}", Strings.isNotBlank(user));
+        return user;
     }
 
     /**
