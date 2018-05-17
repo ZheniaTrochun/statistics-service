@@ -146,7 +146,7 @@ public class StatisticsController {
                 .setSigningKey(secret)
                 .parseClaimsJwt(jwt)
                 .getBody()
-                .get("user", String.class);
+                .getSubject();
 
         LOGGER.trace("Authentication was checked successfully {}", Strings.isNotBlank(user));
         return user;
