@@ -5,7 +5,6 @@ import com.github.statisticsservice.model.StatisticsData;
 import com.github.statisticsservice.services.AuthenticationService;
 import com.github.statisticsservice.services.StatisticsService;
 import io.jsonwebtoken.Jwts;
-import javafx.util.Pair;
 import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,9 +63,7 @@ public class StatisticsController {
         if (statistics == null) {
             String message = "No statistics with such parameters was found.";
             LOGGER.warn(message);
-            return new ResponseEntity<>(
-                    createHeaders(new Pair<>(HttpHeaders.WARNING, message)),
-                    HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         LOGGER.trace("Successfully got all incomes per month.");
@@ -97,9 +94,7 @@ public class StatisticsController {
         if (statistics == null) {
             String message = "No statistics with such parameters was found.";
             LOGGER.warn(message);
-            return new ResponseEntity<>(createHeaders(
-                    new Pair<>(HttpHeaders.WARNING, message)),
-                    HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         LOGGER.trace("Successfully got all outcomes per month.");
@@ -155,19 +150,5 @@ public class StatisticsController {
 
         LOGGER.trace("Authentication was checked successfully {}", Strings.isNotBlank(user));
         return user;
-    }
-
-    /**
-     * Concatenates array of HTTP Header pairs into HttpHeaders instance.
-     *
-     * @param headers array of pairs [header_name]:[header_value]
-     * @return HttpHeaders instance.
-     */
-    private HttpHeaders createHeaders(Pair<String, String>... headers) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        for (Pair<String, String> header : headers) {
-            httpHeaders.add(header.getKey(), header.getValue());
-        }
-        return httpHeaders;
     }
 }
