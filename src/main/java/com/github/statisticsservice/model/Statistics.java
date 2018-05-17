@@ -14,13 +14,14 @@ import java.util.Objects;
 //@Document
 //@CompoundIndex(name = "user_year_month_idx", def = "{'user' : 1, 'year' : 1, 'month' : 1}", unique = true)
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user", "year", "month"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"users", "year", "month"}))
 public class Statistics {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "users")
     private String user;
 
     private Integer year;
